@@ -14,6 +14,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { UserRole } from '@/types/user';
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -30,37 +31,37 @@ const Sidebar = () => {
       name: 'Dashboard', 
       path: '/', 
       icon: BarChart,
-      allowedRoles: ['admin', 'test_manager', 'test_engineer']
+      allowedRoles: ['admin', 'test_manager', 'test_engineer'] as UserRole[]
     },
     { 
       name: 'Projects', 
       path: '/projects', 
       icon: Folder,
-      allowedRoles: ['admin', 'test_manager', 'test_engineer']
+      allowedRoles: ['admin', 'test_manager', 'test_engineer'] as UserRole[]
     },
     { 
       name: 'Test Cases', 
       path: '/test-cases', 
       icon: List,
-      allowedRoles: ['admin', 'test_manager', 'test_engineer']
+      allowedRoles: ['admin', 'test_manager', 'test_engineer'] as UserRole[]
     },
     { 
       name: 'Test Execution', 
       path: '/test-execution', 
       icon: CheckSquare,
-      allowedRoles: ['admin', 'test_manager', 'test_engineer']
+      allowedRoles: ['admin', 'test_manager', 'test_engineer'] as UserRole[]
     },
     { 
       name: 'User Management', 
       path: '/user-management', 
       icon: Users,
-      allowedRoles: ['admin'] // Only admin can access
+      allowedRoles: ['admin'] as UserRole[]
     },
     { 
       name: 'Settings', 
       path: '/settings', 
       icon: Settings,
-      allowedRoles: ['admin', 'test_manager']
+      allowedRoles: ['admin', 'test_manager'] as UserRole[]
     },
   ];
 
