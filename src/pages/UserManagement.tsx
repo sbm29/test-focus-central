@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -29,7 +28,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { UserInvite, UserRole } from '@/types/user';
 
-// Mock user data
 const mockUsers = [
   {
     id: '1',
@@ -57,7 +55,6 @@ const mockUsers = [
   },
 ];
 
-// Mock invites
 const mockInvites: UserInvite[] = [
   {
     id: '101',
@@ -92,7 +89,6 @@ const UserManagement = () => {
     },
   });
   
-  // Check if user has admin permissions
   if (!hasPermission('admin')) {
     return (
       <MainLayout>
@@ -107,10 +103,8 @@ const UserManagement = () => {
   }
 
   const handleInviteUser = (data: UserFormValues) => {
-    // In a real app, we would call an API to send the invitation
     console.log('Inviting user:', data);
     
-    // Create a new invite
     const newInvite: UserInvite = {
       id: Math.random().toString(36).substr(2, 9),
       email: data.email,
@@ -258,7 +252,11 @@ const UserManagement = () => {
                     </TableCell>
                     <TableCell>{user.createdAt.toLocaleDateString()}</TableCell>
                     <TableCell>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => navigate(`/user-management/edit/${user.id}`)}
+                      >
                         Edit
                       </Button>
                     </TableCell>

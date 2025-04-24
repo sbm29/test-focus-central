@@ -1,4 +1,3 @@
-
 const express = require('express');
 const userController = require('../controllers/userController');
 const { protect, authorize } = require('../middleware/auth');
@@ -12,5 +11,6 @@ router.post('/invite', protect, authorize('admin'), userController.inviteUser);
 router.put('/invites/:id/resend', protect, authorize('admin'), userController.resendInvite);
 router.get('/:id', protect, userController.getUserById);
 router.put('/:id/role', protect, authorize('admin'), userController.updateUserRole);
+router.put('/:id', protect, authorize('admin'), userController.updateUser);
 
 module.exports = router;

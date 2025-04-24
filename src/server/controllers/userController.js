@@ -1,4 +1,3 @@
-
 const User = require('../models/User');
 const UserInvite = require('../models/UserInvite');
 const { sendInvitationEmail } = require('../utils/emailService');
@@ -57,6 +56,40 @@ exports.updateUserRole = async (req, res) => {
     });
   } catch (error) {
     console.error('Update user role error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// Update user details (admin only)
+exports.updateUser = async (req, res) => {
+  try {
+    const { name, email, role } = req.body;
+    
+    if (!['admin', 'test_manager', 'test_engineer'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role' });
+    }
+    
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Update user details
+    user.name = name;
+    user.email = email;
+    user.role = role;
+    
+    await user.save();
+    
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    });
+  } catch (error) {
+    console.error('Update user error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 };
