@@ -60,6 +60,15 @@ const TestCaseView: React.FC<TestCaseViewProps> = ({ isEditing = false }) => {
     return <Badge variant="secondary" className={classes}>{type}</Badge>;
   };
 
+  // Convert testCase to the expected format for the form
+  const formTestCase = {
+    ...testCase,
+    // Ensure type is one of the expected literals
+    type: testCase.type as "Functional" | "Performance" | "Security" | "Usability" | "Compatibility" | "Other",
+    // Ensure priority is one of the expected literals
+    priority: testCase.priority as "Low" | "Medium" | "High" | "Critical"
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
@@ -84,7 +93,7 @@ const TestCaseView: React.FC<TestCaseViewProps> = ({ isEditing = false }) => {
             <CardContent>
               <TestCaseForm
                 onSubmit={handleUpdateTestCase}
-                defaultValues={testCase}
+                defaultValues={formTestCase}
                 isEditing={true}
               />
             </CardContent>

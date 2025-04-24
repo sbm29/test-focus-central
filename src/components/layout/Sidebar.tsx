@@ -9,25 +9,65 @@ import {
   CheckSquare, 
   BarChart, 
   Settings, 
+  Users,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { hasPermission, isAuthenticated } = useAuth();
   
   const isActive = (path: string) => {
     return location.pathname === path;
   };
 
+  // Define navigation items with role-based permissions
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: BarChart },
-    { name: 'Projects', path: '/projects', icon: Folder },
-    { name: 'Test Cases', path: '/test-cases', icon: List },
-    { name: 'Test Execution', path: '/test-execution', icon: CheckSquare },
-    { name: 'Settings', path: '/settings', icon: Settings },
+    { 
+      name: 'Dashboard', 
+      path: '/', 
+      icon: BarChart,
+      allowedRoles: ['admin', 'test_manager', 'test_engineer']
+    },
+    { 
+      name: 'Projects', 
+      path: '/projects', 
+      icon: Folder,
+      allowedRoles: ['admin', 'test_manager', 'test_engineer']
+    },
+    { 
+      name: 'Test Cases', 
+      path: '/test-cases', 
+      icon: List,
+      allowedRoles: ['admin', 'test_manager', 'test_engineer']
+    },
+    { 
+      name: 'Test Execution', 
+      path: '/test-execution', 
+      icon: CheckSquare,
+      allowedRoles: ['admin', 'test_manager', 'test_engineer']
+    },
+    { 
+      name: 'User Management', 
+      path: '/user-management', 
+      icon: Users,
+      allowedRoles: ['admin'] // Only admin can access
+    },
+    { 
+      name: 'Settings', 
+      path: '/settings', 
+      icon: Settings,
+      allowedRoles: ['admin', 'test_manager']
+    },
   ];
+
+  // Filter navigation items based on user permissions
+  const filteredNavItems = navItems.filter(item => {
+    return isAuthenticated && hasPermission(item.allowedRoles);
+  });
 
   return (
     <div 
@@ -54,7 +94,7 @@ const Sidebar = () => {
 
       <nav className="flex-1 py-4">
         <ul className="space-y-1 px-2">
-          {navItems.map((item) => (
+          {filteredNavItems.map((item) => (
             <li key={item.path}>
               <Link
                 to={item.path}
