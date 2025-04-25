@@ -7,6 +7,16 @@ const testCaseSchema = new mongoose.Schema({
     ref: 'Project',
     required: true
   },
+  moduleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Module',
+    required: true
+  },
+  testSuiteId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'TestSuite',
+    required: true
+  },
   title: {
     type: String,
     required: true,

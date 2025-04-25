@@ -11,6 +11,7 @@ import UnauthorizedPage from "./pages/UnauthorizedPage";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/ProjectDetail";
+import ProjectStructure from "./pages/ProjectStructure";
 import TestCases from "./pages/TestCases";
 import TestCaseView from "./pages/TestCaseView";
 import TestExecution from "./pages/TestExecution";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/" element={<Dashboard />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetail />} />
+            <Route path="/projects/:id/structure" element={<ProjectStructure />} />
             <Route path="/test-cases" element={<TestCases />} />
             <Route path="/test-cases/:id" element={<TestCaseView />} />
             <Route path="/test-cases/:id/edit" element={<TestCaseView isEditing />} />

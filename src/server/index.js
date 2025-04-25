@@ -1,4 +1,3 @@
-
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -7,6 +6,8 @@ const userRoutes = require('./routes/userRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const testCaseRoutes = require('./routes/testCaseRoutes');
 const authRoutes = require('./routes/authRoutes');
+const moduleRoutes = require('./routes/moduleRoutes');
+const testSuiteRoutes = require('./routes/testSuiteRoutes');
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/test-cases', testCaseRoutes);
+app.use('/api/modules', moduleRoutes);
+app.use('/api/test-suites', testSuiteRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/testpro')

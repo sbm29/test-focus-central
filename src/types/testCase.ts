@@ -2,6 +2,8 @@
 export interface TestCase {
   id: string;
   projectId: string;
+  moduleId: string;
+  testSuiteId: string;
   title: string;
   description: string;
   priority: string;
@@ -10,6 +12,7 @@ export interface TestCase {
   steps: string;
   expectedResults: string;
   status?: string;
+  actualResults?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -22,4 +25,23 @@ export interface TestExecution {
   notes?: string;
   executedBy: string;
   executedAt: Date;
+}
+
+export interface Module {
+  id: string;
+  name: string;
+  description?: string;
+  projectId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface TestSuite {
+  id: string;
+  name: string;
+  description?: string;
+  moduleId: string;
+  projectId: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

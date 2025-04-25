@@ -1,17 +1,23 @@
 
 import React, { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { mockProjects, mockTestCases } from '@/data/mockData';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import TestExecutionForm from '@/components/test-execution/TestExecutionForm';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 
 const TestExecution = () => {
   const { id } = useParams<{ id?: string }>();
   const [activeTab, setActiveTab] = useState('pending');
+  const [selectedTestCase, setSelectedTestCase] = useState<any>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const navigate = useNavigate();
   
   // If there's no ID, show a project selection screen
   if (!id) {
@@ -73,6 +79,11 @@ const TestExecution = () => {
 
   const handleSubmitExecution = (values: any) => {
     console.log('Execution submitted:', values);
+  };
+  
+  const handleViewDetails = (testCase: any) => {
+    setSelectedTestCase(testCase);
+    setDetailsOpen(true);
   };
 
   return (
@@ -169,7 +180,8 @@ const TestExecution = () => {
                           </span>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => handleViewDetails(testCase)}>
+                        <ArrowRight className="h-4 w-4 mr-2" />
                         View Details
                       </Button>
                     </div>
@@ -180,6 +192,72 @@ const TestExecution = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Test Execution Details Dialog */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="sm:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle>Test Execution Details</DialogTitle>
+          </DialogHeader>
+          {selectedTestCase && (
+            <div className="space-y-6 pt-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">{selectedTestCase.title}</h2>
+                <Badge variant={selectedTestCase.status === 'Passed' ? 'outline' : 'destructive'}>
+                  {selectedTestCase.status}
+                </Badge>
+              </div>
+              
+              <Separator />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Priority</h3>
+                  <p>{selectedTestCase.priority}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Type</h3>
+                  <p>{selectedTestCase.type}</p>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">Description</h3>
+                <p className="text-sm">{selectedTestCase.description}</p>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium text-muted-foreground mb-2">Steps</h3>
+                <div className="text-sm whitespace-pre-line bg-muted/40 p-3 rounded-md">
+                  {selectedTestCase.steps}
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Expected Results</h3>
+                  <div className="text-sm whitespace-pre-line bg-muted/40 p-3 rounded-md">
+                    {selectedTestCase.expectedResults}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Actual Results</h3>
+                  <div className="text-sm whitespace-pre-line bg-muted/40 p-3 rounded-md">
+                    {selectedTestCase.actualResults || "No results recorded"}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-between">
+                <Button variant="outline" onClick={() => setDetailsOpen(false)}>Close</Button>
+                <Button onClick={() => navigate(`/test-cases/${selectedTestCase.id}`)}>
+                  View Test Case
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 };
