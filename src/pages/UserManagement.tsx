@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -77,6 +78,7 @@ type UserFormValues = z.infer<typeof userFormSchema>;
 
 const UserManagement = () => {
   const { hasPermission } = useAuth();
+  const navigate = useNavigate();
   const [users, setUsers] = useState(mockUsers);
   const [invites, setInvites] = useState(mockInvites);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
