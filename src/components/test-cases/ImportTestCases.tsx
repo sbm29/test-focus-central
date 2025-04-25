@@ -20,14 +20,17 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     
     setValidationErrors([]);
+    setIsProcessing(true);
 
     try {
+      console.log('Starting import of file:', file.name);
       const testCases = await importTestCasesFromExcel(file);
       const errors: string[] = [];
       
@@ -39,7 +42,9 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
       });
 
       if (errors.length > 0) {
+        console.log('Validation errors found:', errors);
         setValidationErrors(errors);
+        setIsProcessing(false);
         return;
       }
 
@@ -82,6 +87,7 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
       });
     }
 
+    setIsProcessing(false);
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -110,7 +116,7 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
               <li>title (required)</li>
               <li>description (required)</li>
               <li>priority</li>
-              <li>type (required)</li>
+              <li>type (required) - e.g., Functional, Integration, UI/UX, Performance, Security</li>
               <li>preconditions</li>
               <li>steps (required)</li>
               <li>expectedResults (required)</li>
@@ -140,8 +146,14 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
               accept=".xlsx,.csv"
               onChange={handleFileUpload}
               className="file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+              disabled={isProcessing}
             />
           </div>
+          {isProcessing && (
+            <div className="text-center text-sm text-muted-foreground">
+              Processing your file...
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
