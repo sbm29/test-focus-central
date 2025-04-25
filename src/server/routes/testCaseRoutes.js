@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { protect, authorize } = require('../middleware/auth');
 const TestCase = require('../models/TestCase');
@@ -177,6 +176,27 @@ router.get('/:id/executions', protect, async (req, res) => {
     res.json(executions);
   } catch (error) {
     console.error('Get test executions error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Add new route for importing test cases
+router.post('/import', protect, async (req, res) => {
+  try {
+    const { testCases } = req.body;
+    
+    // Validate each test case and add createdBy
+    const testCasesWithUser = testCases.map(testCase => ({
+      ...testCase,
+      createdBy: req.user.id
+    }));
+
+    // Insert all test cases
+    const result = await TestCase.insertMany(testCasesWithUser);
+    
+    res.status(201).json(result);
+  } catch (error) {
+    console.error('Import test cases error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

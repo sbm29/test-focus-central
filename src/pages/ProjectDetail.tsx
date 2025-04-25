@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import MainLayout from '@/components/layout/MainLayout';
@@ -12,12 +11,15 @@ import { mockProjects, mockTestCases } from '@/data/mockData';
 import { Pencil, Plus, FileText, CheckSquare, Activity, ArrowLeft } from 'lucide-react';
 import TestCaseList from '@/components/test-cases/TestCaseList';
 import TestCaseForm from '@/components/test-cases/TestCaseForm';
+import ImportTestCases from '@/components/test-cases/ImportTestCases';
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState('overview');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
+  const [activeModule, setActiveModule] = useState('');
+  const [activeTestSuite, setActiveTestSuite] = useState('');
+
   // Find the project by ID from mock data
   const project = mockProjects.find((p) => p.id === id);
   const projectTestCases = mockTestCases.filter((tc) => tc.projectId === id);
@@ -204,25 +206,36 @@ const ProjectDetail = () => {
                     All test cases for this project
                   </CardDescription>
                 </div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Test Case
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>Create New Test Case</DialogTitle>
-                    </DialogHeader>
-                    <div className="mt-4">
-                      <TestCaseForm 
-                        onSubmit={handleCreateTestCase} 
-                        projectId={project.id}
-                      />
-                    </div>
-                  </DialogContent>
-                </Dialog>
+                <div className="flex gap-2">
+                  <ImportTestCases 
+                    projectId={project.id}
+                    moduleId={activeModule}
+                    testSuiteId={activeTestSuite}
+                    onImportSuccess={() => {
+                      // Refresh test cases list
+                      console.log('Refreshing test cases after import');
+                    }}
+                  />
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Test Case
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+                      <DialogHeader>
+                        <DialogTitle>Create New Test Case</DialogTitle>
+                      </DialogHeader>
+                      <div className="mt-4">
+                        <TestCaseForm 
+                          onSubmit={handleCreateTestCase} 
+                          projectId={project.id}
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
               </CardHeader>
               <CardContent>
                 <TestCaseList 
