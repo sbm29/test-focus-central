@@ -1,10 +1,12 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import { Import } from 'lucide-react';
 import { importTestCasesFromExcel, validateTestCase } from '@/utils/excelImport';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface ImportTestCasesProps {
   projectId: string;
@@ -16,29 +18,28 @@ interface ImportTestCasesProps {
 const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: ImportTestCasesProps) => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    
+    setValidationErrors([]);
 
     try {
       const testCases = await importTestCasesFromExcel(file);
-      const validationErrors: string[] = [];
+      const errors: string[] = [];
       
       testCases.forEach((testCase, index) => {
-        const errors = validateTestCase(testCase);
-        if (errors.length > 0) {
-          validationErrors.push(`Row ${index + 1}: ${errors.join(', ')}`);
+        const validationErrors = validateTestCase(testCase);
+        if (validationErrors.length > 0) {
+          errors.push(`Row ${index + 1}: ${validationErrors.join(', ')}`);
         }
       });
 
-      if (validationErrors.length > 0) {
-        toast({
-          title: "Validation Error",
-          description: "Some test cases are missing required fields",
-          variant: "destructive"
-        });
+      if (errors.length > 0) {
+        setValidationErrors(errors);
         return;
       }
 
@@ -46,9 +47,11 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
       const enrichedTestCases = testCases.map(testCase => ({
         ...testCase,
         projectId,
-        moduleId,
-        testSuiteId
+        moduleId: testCase.moduleId || moduleId,
+        testSuiteId: testCase.testSuiteId || testSuiteId
       }));
+
+      console.log('Importing test cases:', enrichedTestCases);
 
       // Make API call to save test cases
       const response = await fetch('/api/test-cases/import', {
@@ -71,6 +74,7 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
       onImportSuccess();
       setIsOpen(false);
     } catch (error) {
+      console.error('Import error:', error);
       toast({
         title: "Error",
         description: "Failed to import test cases",
@@ -95,10 +99,13 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Import Test Cases</DialogTitle>
+          <DialogDescription>
+            Upload an Excel (.xlsx) or CSV file with test case data
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="text-sm text-muted-foreground">
-            Upload an Excel (.xlsx) or CSV file with the following columns:
+            The Excel/CSV file should contain the following columns:
             <ul className="list-disc list-inside mt-2 space-y-1">
               <li>title (required)</li>
               <li>description (required)</li>
@@ -107,8 +114,25 @@ const ImportTestCases = ({ projectId, moduleId, testSuiteId, onImportSuccess }: 
               <li>preconditions</li>
               <li>steps (required)</li>
               <li>expectedResults (required)</li>
+              <li>moduleId (optional, will use selected module if not provided)</li>
+              <li>testSuiteId (optional, will use selected test suite if not provided)</li>
             </ul>
           </div>
+          
+          {validationErrors.length > 0 && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Validation Error</AlertTitle>
+              <AlertDescription>
+                <ul className="list-disc list-inside text-sm">
+                  {validationErrors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <div className="flex justify-center">
             <input
               ref={fileInputRef}

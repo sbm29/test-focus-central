@@ -55,6 +55,8 @@ export const mockTestCases: TestCase[] = [
   {
     id: '1',
     projectId: '1',
+    moduleId: 'mod1',
+    testSuiteId: 'ts1',
     title: 'User Registration Validation',
     description: 'Verify that the system validates user registration form fields correctly.',
     priority: 'High',
@@ -69,6 +71,8 @@ export const mockTestCases: TestCase[] = [
   {
     id: '2',
     projectId: '1',
+    moduleId: 'mod1',
+    testSuiteId: 'ts2',
     title: 'Payment Processing',
     description: 'Verify that payment processing works correctly with valid credit card details.',
     priority: 'Critical',
@@ -83,6 +87,8 @@ export const mockTestCases: TestCase[] = [
   {
     id: '3',
     projectId: '1',
+    moduleId: 'mod1',
+    testSuiteId: 'ts2',
     title: 'Search Functionality',
     description: 'Verify that product search returns relevant results.',
     priority: 'Medium',
@@ -96,6 +102,8 @@ export const mockTestCases: TestCase[] = [
   {
     id: '4',
     projectId: '2',
+    moduleId: 'mod2',
+    testSuiteId: 'ts3',
     title: 'Fund Transfer Between Accounts',
     description: 'Verify that users can transfer funds between their own accounts.',
     priority: 'Critical',
@@ -110,6 +118,8 @@ export const mockTestCases: TestCase[] = [
   {
     id: '5',
     projectId: '2',
+    moduleId: 'mod2',
+    testSuiteId: 'ts3',
     title: 'Login Security',
     description: 'Verify that the app locks after 3 failed login attempts.',
     priority: 'High',

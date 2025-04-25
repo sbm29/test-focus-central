@@ -18,16 +18,19 @@ export const importTestCasesFromExcel = (file: File): Promise<Partial<TestCase>[
         const testCases = jsonData.map((row: any) => ({
           title: row.title,
           description: row.description,
-          priority: row.priority,
+          priority: row.priority || 'Medium',
           type: row.type,
-          preconditions: row.preconditions,
+          preconditions: row.preconditions || '',
           steps: row.steps,
           expectedResults: row.expectedResults,
-          status: row.status || 'Draft'
+          status: row.status || 'Draft',
+          moduleId: row.moduleId || '',
+          testSuiteId: row.testSuiteId || ''
         }));
 
         resolve(testCases);
       } catch (error) {
+        console.error('Excel import error:', error);
         reject(new Error('Failed to parse Excel file'));
       }
     };
